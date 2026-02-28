@@ -11,10 +11,13 @@
   "query_keywords": ["robot vacuum", "robotic vacuum", "mopping", "carpet", "pet hair", "obstacle avoidance"]
 }
   "youtube": {
-    "channels": ["Vacuum Wars", "Smart Home Solver", "The Hook Up"],
-    "include": ["transcript", "title_desc", "comments"],
-    "auto_discovery": true
-  },
+  "channels": ["Vacuum Wars", "Smart Home Solver", "The Hook Up"],
+  "include": ["transcript", "title_desc", "comments"],
+  "auto_discovery": true,
+  "videos": [
+    {"video_id":"8D_1nFEneZA", "channel":"Vacuum Wars", "title":"", "url":""}
+  ]
+}
   "output": {
     "language": "bilingual",
     "format": "markdown"
