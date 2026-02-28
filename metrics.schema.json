@@ -1,0 +1,18 @@
+{
+  "time_window": "last_7_days",
+  "sources": ["reddit", "youtube"],
+  "coverage": {
+    "channels_count": 3,
+    "videos_count": 0,
+    "reddit_posts_count": 0,
+    "comments_total": 0,
+    "brands_count": 5,
+    "models_count": 0,
+    "transcript_coverage_rate": 0.0
+  },
+  "data_notes": {
+    "missing_transcripts": 0,
+    "api_failures": 0,
+    "sampling_notes": ""
+  }
+}
