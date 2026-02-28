@@ -4,7 +4,7 @@ import os
 from pathlib import Path
 from dotenv import load_dotenv
 
-from fetch_reddit import fetch_reddit
+from fetch_reddit_public import fetch_reddit_public
 from fetch_youtube import fetch_youtube
 from analyze import analyze_corpus
 from render import render_weekly_report
@@ -19,15 +19,16 @@ def main():
 
     items = []
 
-    # Reddit
-    if "reddit" in config["sources"]:
-        reddit_items = fetch_reddit(
-            subreddits=config["reddit"]["subreddits"],
-            keywords=config["reddit"]["query_keywords"],
-            days=7,
-            limit=120,
-        )
-        items.extend(reddit_items)
+    # Reddit (public JSON, no auth)
+if "reddit" in config["sources"]:
+    reddit_items = fetch_reddit_public(
+        subreddits=config["reddit"]["subreddits"],
+        days=7,
+        per_sub_limit=80,
+        user_agent="vacuum-voice-weekly/0.1 (public-json)",
+        mode="new",
+    )
+    items.extend(reddit_items)
 
     # YouTube MVP: you provide a small list of video ids in config["youtube"]["videos"]
     if "youtube" in config["sources"]:
