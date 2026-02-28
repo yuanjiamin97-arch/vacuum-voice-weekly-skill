@@ -1,1 +1,27 @@
-
+{
+  "date_range": { "preset": "last_7_days" },
+  "sources": ["reddit", "youtube"],
+  "product_filter": {
+    "mode": "brand",
+    "selected_brands": ["Roborock", "Dreame", "Ecovacs", "Narwal", "MOVA"]
+  },
+  "reddit": {
+    "subreddits": ["RobotVacuums", "VacuumCleaners", "Roborock", "roomba"],
+    "query_keywords": ["robot vacuum", "robotic vacuum", "mopping", "carpet", "pet hair", "obstacle avoidance", "mapping", "self-empty", "self-wash"]
+  },
+  "youtube": {
+    "channels": ["Vacuum Wars", "Smart Home Solver", "The Hook Up"],
+    "include": ["transcript", "title_desc", "comments"],
+    "auto_discovery": true
+  },
+  "output": {
+    "language": "bilingual",
+    "format": "markdown"
+  },
+  "deep_dive": {
+    "enabled": false,
+    "focus": "feature",
+    "target": "",
+    "date_range": { "preset": "last_365_days" }
+  }
+}
