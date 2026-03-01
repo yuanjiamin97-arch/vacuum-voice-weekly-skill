@@ -1,0 +1,46 @@
+{
+  "mode": "ad_hoc_research",
+  "time_window": { "preset": "last_30_days" },
+  "sources": ["reddit", "youtube"],
+  "targets": {
+    "brands": ["Roborock"],
+    "models": ["Saros 10R"]
+  },
+  "scope": {
+    "our_brand": "",
+    "include_competitors": true,
+    "competitor_brands": ["Dreame"],
+    "exact_match_required": false,
+    "allow_family_context": true
+  },
+  "focus": ["reliability", "mopping", "competitive_comparison"],
+  "research_goal": "Ad hoc product analysis for Saros 10R using full-site Reddit and global YouTube search.",
+  "reddit": {
+    "global_search_first": true,
+    "per_query_limit": 12,
+    "per_sub_limit": 12,
+    "per_post_comment_limit": 8,
+    "subreddits": ["RobotVacuums", "VacuumCleaners", "Roborock", "homeautomation"],
+    "query_keywords": ["roborock saros 10r", "saros 10r", "roborock saros", "roborock dreame"]
+  },
+  "youtube": {
+    "global_search_first": true,
+    "channels": ["Vacuum Wars", "Smart Home Solver", "The Hook Up"],
+    "include": ["transcript", "title_desc", "comments"],
+    "auto_discovery": true,
+    "max_videos_per_channel": 3,
+    "max_videos_total": 8,
+    "videos": [
+      {
+        "video_id": "oo-4857_s8U",
+        "channel": "Vacuum Chef",
+        "title": "Roborock Saros 10R vs Dreame X50 Ultra Comparison",
+        "url": "https://www.youtube.com/watch?v=oo-4857_s8U"
+      }
+    ]
+  },
+  "output": {
+    "language": "bilingual",
+    "format": "markdown"
+  }
+}
