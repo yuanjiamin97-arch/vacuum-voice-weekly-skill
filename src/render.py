@@ -17,18 +17,42 @@ SCENARIO_CN = {
     "tight_layout": "复杂家具/狭窄动线",
 }
 
+
+def _link_label(item: Dict[str, Any]) -> str:
+    title = (item.get("title") or "").strip()
+    if not title:
+        return item.get("source", "Evidence").title()
+    return title[:56] + ("..." if len(title) > 56 else "")
+
+
+def _link(item: Dict[str, Any]) -> str:
+    url = (item.get("url") or "").strip()
+    if not url:
+        return "N/A"
+    return f"[{_link_label(item)}]({url})"
+
+
+def _link_block(items: list[Dict[str, Any]], limit: int = 2) -> str:
+    if not items:
+        return "N/A"
+    return "<br>".join(_link(item) for item in items[:limit] if item.get("url")) or "N/A"
+
 def render_weekly_report(template_md: str, config: Dict[str, Any], analysis: Dict[str, Any]) -> str:
     brands = config["product_filter"]["selected_brands"]
     sources = ", ".join(config["sources"])
     time_window = config["date_range"].get("preset", "custom")
+    runtime_stats = config.get("runtime_stats", {})
     top_features = analysis.get("top_features", [])
     top_scenarios = analysis.get("top_scenarios", [])
     top_items = analysis.get("top_items", [])
+    top_reddit_items = [item for item in top_items if item.get("source") == "reddit"]
+    top_youtube_items = [item for item in top_items if item.get("source") == "youtube"]
 
     rows = []
     for idx, (feat, cnt) in enumerate(top_features, start=1):
+        evidence = _link_block(top_reddit_items or top_items, limit=2)
         rows.append(
-            f"| {idx} | {feat} | {FEATURE_CN.get(feat,'')} | {cnt} | → |  |  |  |"
+            f"| {idx} | {feat} | {FEATURE_CN.get(feat,'')} | {cnt} | → |  |  | {evidence} |"
         )
     top5_table = "\n".join(rows) if rows else "| 1 |  |  |  |  |  |  |  |"
 
@@ -73,8 +97,8 @@ def render_weekly_report(template_md: str, config: Dict[str, Any], analysis: Dic
     if empty_top5_block in out:
         out = out.replace(empty_top5_block, top5_table)
 
-    reddit_links = [item["url"] for item in top_items if item["source"] == "reddit" and item["url"]][:2]
-    youtube_links = [item["url"] for item in top_items if item["source"] == "youtube" and item["url"]][:2]
+    reddit_links = [item["url"] for item in top_reddit_items if item["url"]][:2]
+    youtube_links = [item["url"] for item in top_youtube_items if item["url"]][:2]
     top_scenario = top_scenarios[0][0] if top_scenarios else "mixed-home layouts"
 
     replacements = {
@@ -110,11 +134,43 @@ def render_weekly_report(template_md: str, config: Dict[str, Any], analysis: Dic
         "{{new_model_2}}": "None auto-detected",
         "{{missing_notes}}": (
             "Generated from live fetches on "
-            f"{datetime.now(timezone.utc).isoformat()}"
+            f"{datetime.now(timezone.utc).isoformat()} "
+            f"(raw_reddit_hits={runtime_stats.get('raw_reddit_hits', 0)}, "
+            f"analyzed_reddit_hits={runtime_stats.get('analyzed_reddit_hits', 0)}, "
+            f"raw_youtube_hits={runtime_stats.get('raw_youtube_hits', 0)}, "
+            f"analyzed_youtube_hits={runtime_stats.get('analyzed_youtube_hits', 0)}, "
+            f"retry_used={runtime_stats.get('retry_used', False)})"
         ),
     }
     for key, value in replacements.items():
         out = out.replace(key, value)
+
+    product_rows = "\n".join(
+        [
+            (
+                f"| {', '.join(config['product_filter'].get('selected_models', []) or config['product_filter'].get('selected_brands', [])) or 'Target'} "
+                f"| Active social discussion; visible comparison context; usable evidence base "
+                f"| Public sample may still skew toward support / shopping threads; platform bias applies "
+                f"| Comparison, shopping, and ownership "
+                f"| {_link_block(top_reddit_items, limit=3)} |"
+            ),
+            (
+                f"| Broader Context "
+                f"| Adds category context and adjacent alternatives "
+                f"| Can dilute exact-model clarity if overused "
+                f"| Review and discovery "
+                f"| {_link_block(top_youtube_items, limit=2)} |"
+            ),
+        ]
+    )
+    empty_product_block = "\n".join(
+        [
+            "|  |  |  |  |  |",
+            "|  |  |  |  |  |",
+        ]
+    )
+    if empty_product_block in out:
+        out = out.replace(empty_product_block, product_rows)
 
     out = re.sub(r"\{\{[^}]+\}\}", "N/A", out)
 

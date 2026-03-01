@@ -143,14 +143,92 @@ def _discover_recent_videos(channels: List[str], days: int, max_videos_per_chann
     return out
 
 
+def _search_global_videos(queries: List[str], max_videos_total: int) -> List[Dict[str, Any]]:
+    if not queries or max_videos_total <= 0:
+        return []
+
+    out: List[Dict[str, Any]] = []
+    seen_ids: set[str] = set()
+    ydl_opts = {
+        "quiet": True,
+        "skip_download": True,
+        "ignoreerrors": True,
+        "no_warnings": True,
+        "socket_timeout": 8,
+    }
+
+    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+        for query in queries:
+            if not query.strip():
+                continue
+            try:
+                info = ydl.extract_info(f"ytsearchdate{max_videos_total}:{query}", download=False) or {}
+            except Exception:
+                continue
+
+            for entry in info.get("entries") or []:
+                if not entry:
+                    continue
+                normalized = _normalize_video(entry)
+                video_id = normalized["video_id"]
+                if not video_id or video_id in seen_ids:
+                    continue
+                out.append(normalized)
+                seen_ids.add(video_id)
+                if len(out) >= max_videos_total:
+                    return out
+
+    return out
+
+
 def fetch_youtube(
     videos: List[Dict[str, Any]] | None = None,
     channels: List[str] | None = None,
+    search_queries: List[str] | None = None,
     days: int = 7,
     max_videos_per_channel: int = 2,
+    max_videos_total: int = 5,
     include_comments: bool = True,
+    diagnostics: List[Dict[str, Any]] | None = None,
 ) -> List[Dict[str, Any]]:
-    seeds = videos or _discover_recent_videos(channels or [], days, max_videos_per_channel)
+    seeds: List[Dict[str, Any]] = []
+
+    if search_queries:
+        seeds = _search_global_videos(search_queries, max_videos_total)
+        if diagnostics is not None:
+            diagnostics.append(
+                {
+                    "source": "youtube_search",
+                    "target": "global_search",
+                    "status": "ok" if seeds else "no_results",
+                    "results": len(seeds),
+                }
+            )
+
+    if not seeds and videos:
+        seeds = list(videos)
+        if diagnostics is not None:
+            diagnostics.append(
+                {
+                    "source": "youtube_seed",
+                    "target": "configured_videos",
+                    "status": "ok" if seeds else "empty",
+                    "results": len(seeds),
+                }
+            )
+
+    if not seeds:
+        seeds = _discover_recent_videos(channels or [], days, max_videos_per_channel)
+        if diagnostics is not None:
+            diagnostics.append(
+                {
+                    "source": "youtube_listing",
+                    "target": "channel_fallback",
+                    "status": "ok" if seeds else "no_results",
+                    "results": len(seeds),
+                }
+            )
+
     out: List[Dict[str, Any]] = []
     for video in seeds:
         normalized = _normalize_video(video)
@@ -169,6 +247,16 @@ def fetch_youtube(
                 "published_at": normalized["published_at"],
                 "transcript": transcript,
                 "comments": comments,
+            }
+        )
+
+    if diagnostics is not None:
+        diagnostics.append(
+            {
+                "source": "youtube_final",
+                "target": "analyzed_items",
+                "status": "ok",
+                "results": len(out),
             }
         )
     return out

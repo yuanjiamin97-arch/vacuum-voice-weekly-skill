@@ -1,0 +1,46 @@
+{
+  "mode": "weekly_monitoring",
+  "time_window": { "preset": "last_7_days" },
+  "sources": ["reddit", "youtube"],
+  "targets": {
+    "brands": ["Roborock"],
+    "models": []
+  },
+  "scope": {
+    "our_brand": "Roborock",
+    "include_competitors": true,
+    "competitor_brands": ["Dreame", "Ecovacs", "Narwal", "MOVA"],
+    "exact_match_required": false,
+    "allow_family_context": true
+  },
+  "focus": ["weekly_monitoring", "competitive_landscape", "feature_trends"],
+  "research_goal": "Weekly Monday monitoring of last week's social discussion for our brand and competitors.",
+  "reddit": {
+    "global_search_first": true,
+    "per_query_limit": 6,
+    "per_sub_limit": 6,
+    "per_post_comment_limit": 4,
+    "subreddits": ["RobotVacuums", "VacuumCleaners", "Roborock", "homeautomation"],
+    "query_keywords": ["robot vacuum", "robotic vacuum", "mopping", "carpet", "pet hair", "obstacle avoidance"]
+  },
+  "youtube": {
+    "global_search_first": true,
+    "channels": ["Vacuum Wars", "Smart Home Solver", "The Hook Up"],
+    "include": ["transcript", "title_desc", "comments"],
+    "auto_discovery": true,
+    "max_videos_per_channel": 2,
+    "max_videos_total": 5,
+    "videos": [
+      {
+        "video_id": "8D_1nFEneZA",
+        "channel": "Vacuum Wars",
+        "title": "Seed video for live transcript fetch",
+        "url": "https://www.youtube.com/watch?v=8D_1nFEneZA"
+      }
+    ]
+  },
+  "output": {
+    "language": "bilingual",
+    "format": "markdown"
+  }
+}
