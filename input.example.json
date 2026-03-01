@@ -6,18 +6,23 @@
     "selected_brands": ["Roborock", "Dreame", "Ecovacs", "Narwal", "MOVA"]
   },
   "reddit": {
-    "reddit": {
-  "subreddits": ["RobotVacuums", "VacuumCleaners", "Roborock", "homeautomation"],
-  "query_keywords": ["robot vacuum", "robotic vacuum", "mopping", "carpet", "pet hair", "obstacle avoidance"]
-}
+    "subreddits": ["RobotVacuums", "VacuumCleaners", "Roborock", "homeautomation"],
+    "query_keywords": ["robot vacuum", "robotic vacuum", "mopping", "carpet", "pet hair", "obstacle avoidance"]
+  },
   "youtube": {
-  "channels": ["Vacuum Wars", "Smart Home Solver", "The Hook Up"],
-  "include": ["transcript", "title_desc", "comments"],
-  "auto_discovery": true,
-  "videos": [
-    {"video_id":"8D_1nFEneZA", "channel":"Vacuum Wars", "title":"", "url":""}
-  ]
-}
+    "channels": ["Vacuum Wars", "Smart Home Solver", "The Hook Up"],
+    "include": ["transcript", "title_desc", "comments"],
+    "auto_discovery": true,
+    "max_videos_per_channel": 2,
+    "videos": [
+      {
+        "video_id": "8D_1nFEneZA",
+        "channel": "Vacuum Wars",
+        "title": "Seed video for live transcript fetch",
+        "url": "https://www.youtube.com/watch?v=8D_1nFEneZA"
+      }
+    ]
+  },
   "output": {
     "language": "bilingual",
     "format": "markdown"
